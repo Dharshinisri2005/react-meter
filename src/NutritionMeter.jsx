@@ -1,28 +1,19 @@
-import React, { useState, useEffect } from "react";
-import "./NutritionMeter.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faTrashAlt,
-  faUtensils,
-  faPlus,
-  faMinus,
-  faTimes,
-  faChevronDown,
-  faChevronUp,
-} from "@fortawesome/free-solid-svg-icons";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import React, { useState, useEffect } from 'react';
+import './NutritionMeter.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrashAlt, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
 const NutritionMeter = () => {
   const defaultItemsDisplayed = [];
 
   const [nutritionItems, setNutritionItems] = useState(defaultItemsDisplayed);
   const [newItem, setNewItem] = useState({
-    name: "",
-    calories: "",
-    protein: "",
-    carbs: "",
-    fat: "",
+    name: '',
+    calories: '',
+    protein: '',
+    carbs: '',
+    fat: '',
   });
 
   const [editItem, setEditItem] = useState(null);
@@ -31,11 +22,11 @@ const NutritionMeter = () => {
   const [inputError, setInputError] = useState(false);
 
   const [userDetails, setUserDetails] = useState({
-    age: "",
-    height: "",
-    weight: "",
-    gender: "male",
-    activityLevel: "sedentary",
+    age: '',
+    height: '',
+    weight: '',
+    gender: 'male',
+    activityLevel: 'sedentary',
   });
   const [recommendations, setRecommendations] = useState({
     calories: 0,
@@ -44,7 +35,7 @@ const NutritionMeter = () => {
     fat: 0,
   });
 
-  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     const calculateTotalCalories = nutritionItems.reduce(
@@ -64,21 +55,21 @@ const NutritionMeter = () => {
   const addNutritionItem = () => {
     if (
       newItem.name &&
-      newItem.calories >= 0 &&
-      newItem.protein >= 0 &&
-      newItem.carbs >= 0 &&
-      newItem.fat >= 0
+      parseFloat(newItem.calories) >= 0 &&
+      parseFloat(newItem.protein) >= 0 &&
+      parseFloat(newItem.carbs) >= 0 &&
+      parseFloat(newItem.fat) >= 0
     ) {
       setNutritionItems([
         ...nutritionItems,
         { ...newItem, id: Date.now(), quantity: 1 },
       ]);
       setNewItem({
-        name: "",
-        calories: "",
-        protein: "",
-        carbs: "",
-        fat: "",
+        name: '',
+        calories: '',
+        protein: '',
+        carbs: '',
+        fat: '',
       });
       setInputError(false);
     } else {
@@ -98,21 +89,21 @@ const NutritionMeter = () => {
   const updateItemFunction = () => {
     if (
       newItem.name &&
-      newItem.calories >= 0 &&
-      newItem.protein >= 0 &&
-      newItem.carbs >= 0 &&
-      newItem.fat >= 0
+      parseFloat(newItem.calories) >= 0 &&
+      parseFloat(newItem.protein) >= 0 &&
+      parseFloat(newItem.carbs) >= 0 &&
+      parseFloat(newItem.fat) >= 0
     ) {
       const updatedItems = nutritionItems.map((item) =>
         item.id === newItem.id ? newItem : item
       );
       setNutritionItems(updatedItems);
       setNewItem({
-        name: "",
-        calories: "",
-        protein: "",
-        carbs: "",
-        fat: "",
+        name: '',
+        calories: '',
+        protein: '',
+        carbs: '',
+        fat: '',
       });
       setEditItem(null);
       setInputError(false);
@@ -127,7 +118,7 @@ const NutritionMeter = () => {
   };
 
   const inputErrorStyle = {
-    borderColor: "red",
+    borderColor: 'red',
   };
 
   const updateItemQuantity = (id, change) => {
@@ -139,33 +130,30 @@ const NutritionMeter = () => {
     setNutritionItems(updatedItems);
   };
 
-  const totalProtein = () => {
-    return nutritionItems.reduce(
+  const totalProtein = () =>
+    nutritionItems.reduce(
       (total, item) => total + parseFloat(item.protein) * item.quantity,
       0
     );
-  };
 
-  const totalCarbs = () => {
-    return nutritionItems.reduce(
+  const totalCarbs = () =>
+    nutritionItems.reduce(
       (total, item) => total + parseFloat(item.carbs) * item.quantity,
       0
     );
-  };
 
-  const totalFat = () => {
-    return nutritionItems.reduce(
+  const totalFat = () =>
+    nutritionItems.reduce(
       (total, item) => total + parseFloat(item.fat) * item.quantity,
       0
     );
-  };
 
   const calculateRecommendations = () => {
     const { age, height, weight, gender, activityLevel } = userDetails;
 
     let bmr;
 
-    if (gender === "male") {
+    if (gender === 'male') {
       bmr = 10 * weight + 6.25 * height - 5 * age + 5;
     } else {
       bmr = 10 * weight + 6.25 * height - 5 * age - 161;
@@ -174,246 +162,263 @@ const NutritionMeter = () => {
     let activityFactor;
 
     switch (activityLevel) {
-      case "sedentary":
+      case 'sedentary':
         activityFactor = 1.2;
         break;
-      case "lightly_active":
+      case 'lightly_active':
         activityFactor = 1.375;
         break;
-      case "moderately_active":
+      case 'moderately_active':
         activityFactor = 1.55;
         break;
-      case "very_active":
+      case 'very_active':
         activityFactor = 1.725;
         break;
-      case "extra_active":
+      case 'extra_active':
         activityFactor = 1.9;
         break;
       default:
         activityFactor = 1.2;
     }
 
-    const tdee = bmr * activityFactor;
+    const totalCalories = bmr * activityFactor;
+    const protein = (totalCalories * 0.3) / 4;
+    const carbs = (totalCalories * 0.5) / 4;
+    const fat = (totalCalories * 0.2) / 9;
 
     setRecommendations({
-      calories: Math.round(tdee),
-      protein: Math.round((tdee * 0.2) / 4),
-      carbs: Math.round((tdee * 0.5) / 4),
-      fat: Math.round((tdee * 0.3) / 9),
+      calories: totalCalories.toFixed(2),
+      protein: protein.toFixed(2),
+      carbs: carbs.toFixed(2),
+      fat: fat.toFixed(2),
     });
   };
 
-  useEffect(() => {
-    if (userDetails.age && userDetails.height && userDetails.weight) {
-      calculateRecommendations();
-    }
-  }, [userDetails]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
 
-  const pieChartData = [
-    { name: "Protein", value: totalProtein() },
-    { name: "Carbs", value: totalCarbs() },
-    { name: "Fat", value: totalFat() },
+  const openDrawer = () => {
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+  };
+
+  const chartData = [
+    { name: 'Calories', value: totalCalories },
+    { name: 'Protein', value: totalProtein() },
+    { name: 'Carbs', value: totalCarbs() },
+    { name: 'Fat', value: totalFat() },
   ];
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   return (
-    <div className="gradient-background">
-      <div className="container">
-        <h1>Nutrition Meter</h1>
+    <div className="container">
+      <h1>Nutrition Meter</h1>
+
+      <button className="openbtn" onClick={openDrawer}>
+        ☰ Open User Details
+      </button>
+
+      <div className="main-content">
+        <div className="text-center">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newItem.name}
+            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+            className="input-field"
+            style={inputError && !newItem.name ? inputErrorStyle : {}}
+          />
+          <input
+            type="number"
+            placeholder="Calories"
+            value={newItem.calories}
+            onChange={(e) =>
+              setNewItem({ ...newItem, calories: e.target.value })
+            }
+            className="input-field"
+            style={
+              inputError && parseFloat(newItem.calories) < 0
+                ? inputErrorStyle
+                : {}
+            }
+          />
+          <input
+            type="number"
+            placeholder="Protein (g)"
+            value={newItem.protein}
+            onChange={(e) =>
+              setNewItem({ ...newItem, protein: e.target.value })
+            }
+            className="input-field"
+            style={
+              inputError && parseFloat(newItem.protein) < 0
+                ? inputErrorStyle
+                : {}
+            }
+          />
+          <input
+            type="number"
+            placeholder="Carbs (g)"
+            value={newItem.carbs}
+            onChange={(e) => setNewItem({ ...newItem, carbs: e.target.value })}
+            className="input-field"
+            style={
+              inputError && parseFloat(newItem.carbs) < 0
+                ? inputErrorStyle
+                : {}
+            }
+          />
+          <input
+            type="number"
+            placeholder="Fat (g)"
+            value={newItem.fat}
+            onChange={(e) => setNewItem({ ...newItem, fat: e.target.value })}
+            className="input-field"
+            style={
+              inputError && parseFloat(newItem.fat) < 0
+                ? inputErrorStyle
+                : {}
+            }
+          />
+
+          {editItem ? (
+            <button onClick={updateItemFunction}>Update Item</button>
+          ) : (
+            <button onClick={addNutritionItem}>Add Item</button>
+          )}
+
+          {inputError && <p className="error-message">Invalid input values</p>}
+
+          <ul className="item-list">
+            {nutritionItems.map((item) => (
+              <li key={item.id} className="item">
+                <div>
+                  <p>Name: {item.name}</p>
+                  <p>Calories: {item.calories}</p>
+                  <p>Protein: {item.protein}</p>
+                  <p>Carbs: {item.carbs}</p>
+                  <p>Fat: {item.fat}</p>
+                  <p>Quantity: {item.quantity}</p>
+                </div>
+                <div>
+                  <button
+                    className="icon-button"
+                    onClick={() => updateItemQuantity(item.id, 1)}
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    onClick={() => updateItemQuantity(item.id, -1)}
+                  >
+                    <FontAwesomeIcon icon={faMinus} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    onClick={() => editItemFunction(item)}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    onClick={() => deleteItemFunction(item.id)}
+                  >
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {nutritionItems.length > 0 && (
+            <button onClick={removeAllItems}>Remove All Items</button>
+          )}
+        </div>
+
         {showWarning && (
-          <div className="warning">
-            Total calorie intake is over 1000!
+          <div className="warning-message">
+            Total calories exceed 1000! Please be careful with your diet.
           </div>
         )}
-        {inputError && <div className="error-message">Please fill all fields correctly.</div>}
-        <div className="theme-toggle">
-          <label htmlFor="themeSwitch">Dark Mode</label>
-          <input
-            type="checkbox"
-            id="themeSwitch"
-            onChange={(e) => {
-              document.body.className = e.target.checked
-                ? "dark-theme"
-                : "light-theme";
-            }}
-          />
-        </div>
-        <div className="dashboard">
-          <div>
-            <input
-              type="text"
-              placeholder="Item Name"
-              className="input-field"
-              value={newItem.name}
-              onChange={(e) =>
-                setNewItem({ ...newItem, name: e.target.value })
-              }
-              style={inputError ? inputErrorStyle : {}}
-            />
-            <input
-              type="number"
-              placeholder="Calories"
-              className="input-field"
-              value={newItem.calories}
-              onChange={(e) =>
-                setNewItem({ ...newItem, calories: parseFloat(e.target.value) })
-              }
-              style={inputError ? inputErrorStyle : {}}
-            />
-            <input
-              type="number"
-              placeholder="Protein (g)"
-              className="input-field"
-              value={newItem.protein}
-              onChange={(e) =>
-                setNewItem({ ...newItem, protein: parseFloat(e.target.value) })
-              }
-              style={inputError ? inputErrorStyle : {}}
-            />
-            <input
-              type="number"
-              placeholder="Carbs (g)"
-              className="input-field"
-              value={newItem.carbs}
-              onChange={(e) =>
-                setNewItem({ ...newItem, carbs: parseFloat(e.target.value) })
-              }
-              style={inputError ? inputErrorStyle : {}}
-            />
-            <input
-              type="number"
-              placeholder="Fat (g)"
-              className="input-field"
-              value={newItem.fat}
-              onChange={(e) =>
-                setNewItem({ ...newItem, fat: parseFloat(e.target.value) })
-              }
-              style={inputError ? inputErrorStyle : {}}
-            />
-          </div>
-          {editItem ? (
-            <button className="edit-button" onClick={updateItemFunction}>
-              <FontAwesomeIcon icon={faEdit} /> Update Item
-            </button>
-          ) : (
-            <button className="add-button" onClick={addNutritionItem}>
-              <FontAwesomeIcon icon={faUtensils} /> Add Item
-            </button>
-          )}
-          <button className="clear-button" onClick={removeAllItems}>
-            <FontAwesomeIcon icon={faTrashAlt} /> Clear All
-          </button>
-        </div>
-        <h2 className="text-center">Items</h2>
-        {nutritionItems.map((item) => (
-          <div key={item.id} className="item-card">
-            <h3>{item.name}</h3>
-            <p>Calories: {item.calories}</p>
-            <p>Protein: {item.protein}g</p>
-            <p>Carbs: {item.carbs}g</p>
-            <p>Fat: {item.fat}g</p>
-            <div className="quantity-controls">
-              <button onClick={() => updateItemQuantity(item.id, -1)}>
-                <FontAwesomeIcon icon={faMinus} />
-              </button>
-              <span>Quantity: {item.quantity}</span>
-              <button onClick={() => updateItemQuantity(item.id, 1)}>
-                <FontAwesomeIcon icon={faPlus} />
-              </button>
-            </div>
-            <button className="edit-button" onClick={() => editItemFunction(item)}>
-              <FontAwesomeIcon icon={faEdit} /> Edit
-            </button>
-            <button className="delete-button" onClick={() => deleteItemFunction(item.id)}>
-              <FontAwesomeIcon icon={faTrashAlt} /> Delete
-            </button>
-          </div>
-        ))}
-        <div className="total-section">
-          <h2>Total Calories: {totalCalories}</h2>
-        </div>
-        <div className="chart-container">
-          <PieChart width={400} height={400}>
-            <Pie
-              data={pieChartData}
-              cx={200}
-              cy={200}
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {pieChartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </div>
-        <div className="user-details-toggle">
-          <button
-            className="toggle-button"
-            onClick={() => setShowUserDetails(!showUserDetails)}
+
+        <PieChart width={400} height={400}>
+          <Pie
+            data={chartData}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={100}
+            fill="#8884d8"
           >
-            {showUserDetails ? (
-              <span>
-                Hide User Details <FontAwesomeIcon icon={faChevronUp} />
-              </span>
-            ) : (
-              <span>
-                Show User Details <FontAwesomeIcon icon={faChevronDown} />
-              </span>
-            )}
-          </button>
-        </div>
-        {showUserDetails && (
-          <div className="user-details">
-            <h2 className="text-center">User Details</h2>
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </div>
+
+      <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
+        <button className="closebtn" onClick={closeDrawer}>
+          &times;
+        </button>
+        <div className="drawer-content">
+          <h2>User Details</h2>
+          <label>
+            Age:
             <input
               type="number"
-              placeholder="Age"
-              className="input-field"
+              name="age"
               value={userDetails.age}
-              onChange={(e) =>
-                setUserDetails({ ...userDetails, age: parseFloat(e.target.value) })
-              }
+              onChange={handleChange}
             />
+          </label>
+          <label>
+            Height (cm):
             <input
               type="number"
-              placeholder="Height (cm)"
-              className="input-field"
+              name="height"
               value={userDetails.height}
-              onChange={(e) =>
-                setUserDetails({ ...userDetails, height: parseFloat(e.target.value) })
-              }
+              onChange={handleChange}
             />
+          </label>
+          <label>
+            Weight (kg):
             <input
               type="number"
-              placeholder="Weight (kg)"
-              className="input-field"
+              name="weight"
               value={userDetails.weight}
-              onChange={(e) =>
-                setUserDetails({ ...userDetails, weight: parseFloat(e.target.value) })
-              }
+              onChange={handleChange}
             />
+          </label>
+          <label>
+            Gender:
             <select
-              className="input-field"
+              name="gender"
               value={userDetails.gender}
-              onChange={(e) =>
-                setUserDetails({ ...userDetails, gender: e.target.value })
-              }
+              onChange={handleChange}
             >
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
+          </label>
+          <label>
+            Activity Level:
             <select
-              className="input-field"
+              name="activityLevel"
               value={userDetails.activityLevel}
-              onChange={(e) =>
-                setUserDetails({ ...userDetails, activityLevel: e.target.value })
-              }
+              onChange={handleChange}
             >
               <option value="sedentary">Sedentary</option>
               <option value="lightly_active">Lightly Active</option>
@@ -421,14 +426,16 @@ const NutritionMeter = () => {
               <option value="very_active">Very Active</option>
               <option value="extra_active">Extra Active</option>
             </select>
-          </div>
-        )}
-        <div className="recommendation-section">
-          <h2>Daily Recommendations</h2>
-          <p>Calories: {recommendations.calories}</p>
-          <p>Protein: {recommendations.protein}g</p>
-          <p>Carbs: {recommendations.carbs}g</p>
-          <p>Fat: {recommendations.fat}g</p>
+          </label>
+          <button onClick={calculateRecommendations}>
+            Calculate Recommendations
+          </button>
+
+          <h3>Recommendations</h3>
+          <p>Calories: {recommendations.calories} kcal</p>
+          <p>Protein: {recommendations.protein} g</p>
+          <p>Carbs: {recommendations.carbs} g</p>
+          <p>Fat: {recommendations.fat} g</p>
         </div>
       </div>
     </div>
